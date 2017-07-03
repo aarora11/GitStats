@@ -1,0 +1,2 @@
+export const BIT_COIN_PRICE = 'BIT_COIN_PRICE';
+export const GITHUB_PROFILE = 'GITHUB_PROFILE';
