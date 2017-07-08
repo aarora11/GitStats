@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {fetchBitCoinPrice, getGithubProfile} from '../actions/index';
+import {fetchBitCoinPrice, getGithubProfile, getAllRepositories} from '../actions/index';
 
 
 class LandingPage extends Component {
@@ -12,23 +12,23 @@ class LandingPage extends Component {
 
 
   componentWillMount() {
-    this.props.getBitCoinPrice();
     this.props.getGithubProfile();
-    this.interval = setInterval(this.props.getBitCoinPrice, 10000);
+    this.props.getAllRepositories();
   }
 
-  renderBitCoinPrice(newPrice) {
+
+  renderUser(user) {
     return (
       <div>
-        <p>Price :{newPrice.symbol}{newPrice.buy}</p>
-        <p>15m :{newPrice.symbol}{newPrice["15m"]}</p>
-        <p>Sell :{newPrice.symbol}{newPrice.sell}</p>
+        <p>{user.name}</p>
+        <p>{user.bio}</p>
+        <p>Followers: {user.followers}</p>
+        <p>Company: {user.company}</p>
       </div>
     );
   }
 
   render() {
-
     if(this.props.loading){
       return (
         <div>
@@ -38,7 +38,7 @@ class LandingPage extends Component {
     } else {
       return (
         <div>
-          {this.renderBitCoinPrice(this.props.newPrice)}
+          {this.renderUser(this.props.user)}
         </div>
       );
     }
@@ -48,13 +48,14 @@ class LandingPage extends Component {
 
 function mapStateToProps(state) {
   return {
-    newPrice: state.coin.newPrice,
     loading : state.coin.loading,
-    user: state.coin.user
+    user: state.coin.user,
+    error: state.coin.error,
+    repositories: state.coin.repositories
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({getBitCoinPrice: fetchBitCoinPrice ,getGithubProfile: getGithubProfile}, dispatch);
+  return bindActionCreators({getGithubProfile: getGithubProfile, getAllRepositories: getAllRepositories}, dispatch);
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
