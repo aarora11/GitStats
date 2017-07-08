@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {fetchBitCoinPrice, getGithubProfile, getAllRepositories} from '../actions/index';
+import { Link } from 'react-router';
 
+import {fetchBitCoinPrice, getGithubProfile, getAllRepositories, fetchRepositoryDetails} from '../actions/index';
 
 class LandingPage extends Component {
 
@@ -28,6 +29,18 @@ class LandingPage extends Component {
     );
   }
 
+  buttonCLicked(){
+    console.log("Clicked");
+  }
+
+
+  renderRepository(repo){
+    let name = repo.name;
+    return(
+      <p key={name}><button onClick={()=> {this.props.fetchRepositoryDetails(name)}} title="Repository">{name}</button></p>
+    )
+  }
+
   render() {
     if(this.props.loading){
       return (
@@ -36,9 +49,11 @@ class LandingPage extends Component {
         </div>
       );
     } else {
+      let repositories = this.props.repositories;
       return (
         <div>
           {this.renderUser(this.props.user)}
+          {repositories.map(this.renderRepository.bind(this))}
         </div>
       );
     }
@@ -56,6 +71,6 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({getGithubProfile: getGithubProfile, getAllRepositories: getAllRepositories}, dispatch);
+  return bindActionCreators({getGithubProfile: getGithubProfile, getAllRepositories: getAllRepositories, fetchRepositoryDetails: fetchRepositoryDetails}, dispatch);
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);

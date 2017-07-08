@@ -4,8 +4,9 @@ import {
   GITHUB_PROFILE,
   GITHUB_PROFILE_URL,
   GET_PROFILE_ERROR,
-  GITHUB_REPOSITORIES
-
+  GITHUB_REPOSITORIES,
+  GET_ALL_REPOSITORIES,
+  FETCH_REPOSITORY_DETAILS
 } from './constants';
 export const BITCOIN_PRICE = 'bitcoin_price';
 
@@ -47,12 +48,25 @@ export function getAllRepositories(){
   return function(dispatch){
     return axios({
       method : 'GET',
-      url : 'https://api.github.com/users/aarora11/repos'
+      url : GET_ALL_REPOSITORIES
     }).then(response => {
       dispatch(getRepositories(response));
     }).catch(error =>{
       console.log(error);
     });
+  }
+}
+
+export function fetchRepositoryDetails(name){
+  return function(dispatch){
+    return axios({
+      method: 'GET',
+      url: FETCH_REPOSITORY_DETAILS+'/'+name+'/commits'
+    }).then(response =>{
+      console.log(response.data);
+    }).catch(error=> {
+      console.log(error);
+    })
   }
 }
 
@@ -75,7 +89,7 @@ function getRepositories(response){
 
   function getProfileError(error){
     return {
-      type: FETCH_ERROR,
+      type: 'FETCH_ERROR',
       payload : error
     }
   }
