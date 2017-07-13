@@ -2,7 +2,8 @@ import {
   BIT_COIN_PRICE,
   GITHUB_PROFILE,
   GET_PROFILE_ERROR,
-  GITHUB_REPOSITORIES
+  GITHUB_REPOSITORIES,
+  GITHUB_REPO_COMMITS
 
 } from '../actions/constants';
 
@@ -11,6 +12,7 @@ const init = {
   loading : true,
   user: null,
   repositories: null,
+  repository_commits: null,
   error: null
 }
 export default function(state = init, action){
@@ -21,6 +23,8 @@ export default function(state = init, action){
       return {...state, user: action.payload }
     case GITHUB_REPOSITORIES:
       return {...state, repositories: action.payload, error: null, loading: false}
+    case GITHUB_REPO_COMMITS:
+      return {...state, repository_commits: action.payload}
     case GET_PROFILE_ERROR:
       return {...state, errror: action.payload}
   }

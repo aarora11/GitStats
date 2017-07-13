@@ -9,6 +9,9 @@ class LandingPage extends Component {
 
   constructor() {
     super();
+    this.state = {
+      data: []
+    };
   }
 
 
@@ -41,6 +44,27 @@ class LandingPage extends Component {
     )
   }
 
+  createMap(commit){
+    console.log(commit.commit.author.name);
+
+    //todo
+    // if(!this.state.data.includes(commit.commit.author.name)){
+    //   let arr = this.state.data.slice();
+    //   arr.push({
+    //     'aaa' : 1
+    //   });
+    //   this.setState({data : arr});
+    // }
+    //   console.log(this.state.data);
+
+  }
+
+
+  renderGraph(commits){
+    if(commits != null)
+    commits.map(this.createMap.bind(this));
+  }
+
   render() {
     if(this.props.loading){
       return (
@@ -54,6 +78,7 @@ class LandingPage extends Component {
         <div>
           {this.renderUser(this.props.user)}
           {repositories.map(this.renderRepository.bind(this))}
+          {this.renderGraph(this.props.repo_commits)}
         </div>
       );
     }
@@ -63,10 +88,11 @@ class LandingPage extends Component {
 
 function mapStateToProps(state) {
   return {
-    loading : state.coin.loading,
-    user: state.coin.user,
-    error: state.coin.error,
-    repositories: state.coin.repositories
+    loading : state.github.loading,
+    user: state.github.user,
+    error: state.github.error,
+    repositories: state.github.repositories,
+    repo_commits: state.github.repository_commits
   }
 }
 

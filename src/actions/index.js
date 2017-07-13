@@ -6,7 +6,8 @@ import {
   GET_PROFILE_ERROR,
   GITHUB_REPOSITORIES,
   GET_ALL_REPOSITORIES,
-  FETCH_REPOSITORY_DETAILS
+  FETCH_REPOSITORY_DETAILS,
+  GITHUB_REPO_COMMITS
 } from './constants';
 export const BITCOIN_PRICE = 'bitcoin_price';
 
@@ -55,7 +56,7 @@ export function getAllRepositories(){
       console.log(error);
     });
   }
-}
+  }
 
 export function fetchRepositoryDetails(name){
   return function(dispatch){
@@ -63,7 +64,7 @@ export function fetchRepositoryDetails(name){
       method: 'GET',
       url: FETCH_REPOSITORY_DETAILS+'/'+name+'/commits'
     }).then(response =>{
-      console.log(response.data);
+      dispatch(getGithubCommits(response))
     }).catch(error=> {
       console.log(error);
     })
@@ -83,9 +84,15 @@ function getRepositories(response){
     type : GITHUB_PROFILE,
     payload: payload.data
   }
-
-
 }
+
+function getGithubCommits(payload){
+  return {
+    type: GITHUB_REPO_COMMITS,
+    payload: payload.data
+  }
+}
+
 
   function getProfileError(error){
     return {
