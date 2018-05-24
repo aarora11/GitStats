@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
-import bitCoinReducer from './bitCoinReducer';
+import GitHubReducer from './githubReducer';
 const rootReducer = combineReducers({
-  coin : bitCoinReducer
+  github : GitHubReducer
 });
 
 export default rootReducer;

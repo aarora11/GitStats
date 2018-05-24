@@ -1,5 +1,4 @@
 import {
-  BIT_COIN_PRICE,
   GITHUB_PROFILE,
   GET_PROFILE_ERROR,
   GITHUB_REPOSITORIES
@@ -11,12 +10,11 @@ const init = {
   loading : true,
   user: null,
   repositories: null,
-  error: null
+  error: null,
+  selectedRepo: null
 }
 export default function(state = init, action){
   switch (action.type) {
-    case 'BIT_COIN_PRICE':
-      return {...state, newPrice: action.payload, loading:false};
     case 'GITHUB_PROFILE':
       return {...state, user: action.payload }
     case GITHUB_REPOSITORIES:
