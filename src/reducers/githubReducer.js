@@ -24,7 +24,6 @@ export default function (state = init, action) {
     case GITHUB_REPOSITORIES:
       return {...state, repositories: action.payload, error: null, loading: false};
     case GITHUB_REPOSITORY_DETAILS:
-      console.log('ghere', action.payload.selectedRepository);
       return {
         ...state, topCommiter: action.payload.topCommiter,
         usersMap: action.payload.usersMap, commitDetails: action.payload.commitDetails,
