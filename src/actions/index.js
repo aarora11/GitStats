@@ -4,7 +4,8 @@ import {
   GITHUB_PROFILE_URL,
   GET_PROFILE_ERROR,
   GITHUB_REPOSITORIES,
-  GITHUB_TOKEN
+  GITHUB_TOKEN,
+  GITHUB_REPOSITORY_DETAILS
 
 } from './constants';
 
@@ -51,8 +52,8 @@ export function getRepositoryDetails(value) {
       }
     }).then(response => {
       //TODO dispatch action to display the repostiory commit details
-      let payload = createPayload(response);
-      console.log(payload);
+      let payload = createPayload(response, value);
+      dispatch(getGithubRepositoryDetails(payload));
     }).catch(error => {
       console.log(error);
     });
@@ -71,6 +72,13 @@ function getGithubProfiles(payload) {
   return {
     type: GITHUB_PROFILE,
     payload: payload.data
+  }
+}
+
+function getGithubRepositoryDetails(payload){
+  return {
+    type: GITHUB_REPOSITORY_DETAILS,
+    payload
   }
 }
 
@@ -124,8 +132,8 @@ function getKeyByValue(usersMap, key){
 }
 
 
-function createPayload(response) {
-  console.log(response);
+function createPayload(response, value) {
+  // console.log(value);
   /*
    Users will be a map which will figure out all users who have committed to a repository.
    A user vs commit graph will be showcased.
@@ -148,7 +156,8 @@ function createPayload(response) {
     limitRemaining,
     commitDetails,
     usersMap,
-    topCommiter
+    topCommiter,
+    selectedRepository: value
   };
   return payload;
 }
