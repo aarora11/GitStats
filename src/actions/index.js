@@ -28,7 +28,8 @@ export function getAllRepositories() {
   return function (dispatch) {
     return axios({
       method: 'GET',
-      url: 'https://api.github.com/users/aarora11/repos',
+      // url: 'https://api.github.com/users/aarora11/repos',
+      url: 'https://api.github.com/orgs/FiviumAustralia/repos',
       headers: {
         Authorization: 'token ' + GITHUB_TOKEN
       }
@@ -41,7 +42,7 @@ export function getAllRepositories() {
 }
 
 export function getRepositoryDetails(value) {
-  let url = 'https://api.github.com/repos/aarora11/' + value + '/commits';
+  let url = 'https://api.github.com/repos/FiviumAustralia/' + value + '/commits';
   // console.log(value, url);
   return function (dispatch) {
     return axios({
