@@ -15,11 +15,16 @@ class LanguageDetailsChart extends Component {
     let fill = ['#8884d8','#83a6ed','#8dd1e1','#82ca9d','#a4de6c','#d0ed57','#ffc658'];
     let keys = Object.keys(this.props.repositoryLanguages);
     let data = [];
+    let selectedFill = [];
     for(let i=0;i<keys.length;i++){
       let  tempObj = {};
       tempObj['name'] = keys[i];
       tempObj['uv'] = this.props.repositoryLanguages[keys[i]];
-      tempObj['fill'] = fill[Math.floor(Math.random()*fill.length)];
+      let x = fill[Math.floor(Math.random()*fill.length)];;
+      if(selectedFill != x){
+        tempObj['fill'] = x;
+      }
+
       data.unshift(tempObj);
     }
 

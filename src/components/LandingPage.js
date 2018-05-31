@@ -15,7 +15,8 @@ class LandingPage extends Component {
   state = {
     timer: null,
     counter: 0,
-    languageGraph: {}
+    languageGraph: {},
+    divOpen: false
   };
 
   componentWillMount() {
@@ -45,32 +46,36 @@ class LandingPage extends Component {
     }
   }
 
+  openDiv(){
+
+  }
 
   renderUser(detail) {
     const user = detail.user;
     const repositories = detail.repositories;
     return (
-      <div id="profile">
-        {user.name} <br/>
-        {user.bio}
-        Followers: {user.followers}
-        <p>Company : <Link to={user.company}>{user.company}</Link></p>
-        <div id="navcontainer">
-          <ul>
-            {
-              repositories.map((value) => {
-
-                return (
-                  <li key={value.name} className="list">
-                    <Link onClick={() => {
-                      this.props.getRepositoryDetails(value.name);
-                    }}>{value.name}</Link>
-                  </li>
-                );
-              })
-            }
-          </ul>
+      <div>
+        <div id="profile">
+          {user.name} <br/>
+          {user.bio}
+          Followers: {user.followers}
+          <p>Company : <Link to={user.company}>{user.company}</Link></p>
         </div>
+          <div id="navcontainer">
+            <ul className="cl-effect-1">
+              {
+                repositories.map((value) => {
+                  return (
+                    <li key={value.name} className="list">
+                      <Link onClick={() => {
+                        this.props.getRepositoryDetails(value.name);
+                      }}>{value.name}</Link>
+                    </li>
+                  );
+                })
+              }
+            </ul>
+          </div>
       </div>
     );
   }
@@ -82,7 +87,7 @@ class LandingPage extends Component {
       </div>
     } else {
       let language = {};
-      for(let i=0;i<this.props.details.repositories.length;i++){
+      for (let i = 0; i < this.props.details.repositories.length; i++) {
         let value = this.props.details.repositories[i];
         if (Object.keys(language).length != 0 && Object.keys(language).includes(value.language)) {
           language[value.language] = language[value.language] + 1;
@@ -96,10 +101,11 @@ class LandingPage extends Component {
           <div id="charts-container">
             <UserDetailsChart userDetails={this.props.usersMap}/>
             <CommitDetailsChart commitDetails={this.props.commitDetails}/>
-            <LanguageDetailsChart repositoryLanguages={language} />
+            <LanguageDetailsChart repositoryLanguages={language}/>
           </div>
           <div id="charts-container">
-            <RepositoryDetails topCommiter={this.props.topCommiter} commits={Object.keys(this.props.commitDetails).length} />
+            <RepositoryDetails topCommiter={this.props.topCommiter}
+                               commits={Object.keys(this.props.commitDetails).length}/>
 
           </div>
 
