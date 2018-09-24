@@ -11,13 +11,13 @@ class CommitDetailsChart extends Component{
       let  tempObj = {};
       tempObj['name'] = keys[i];
       tempObj['Commits'] = this.props.commitDetails[keys[i]];
-      // console.log('kasjdhfkjlasdhfkjasdhfksdf', tempObj);
+      console.log('kasjdhfkjlasdhfkjasdhfksdf', tempObj);
       data.unshift(tempObj);
     }
 
     return(
       <div id="commit-chart">
-      <BarChart width={400} height={200} data={data}
+      <BarChart width={600} height={400} data={data}
                 margin={{top: 5, right: 30, left: 20, bottom: 5}}>
         <CartesianGrid strokeDasharray="3 3"/>
         <XAxis dataKey="name"/>

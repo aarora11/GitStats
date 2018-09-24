@@ -5,30 +5,39 @@ import {
   GET_PROFILE_ERROR,
   GITHUB_REPOSITORIES,
   GITHUB_TOKEN,
-  GITHUB_REPOSITORY_DETAILS
+  GITHUB_REPOSITORY_DETAILS,
+  GITHUB_COMMIT_PER_USER,
+  SELECTED_REPOSITORY
 
 } from './constants';
 
-
-export function getGithubProfile() {
-  return function (dispatch) {
-    return axios({
+// Adding a response interceptor
+const responseInterceptor = axios.interceptors.response.use(function (response) {
+  if (response.status === 202) {
+    response = axios({
       method: 'GET',
-      url: GITHUB_PROFILE_URL
+      url: response.config.url,
+      headers: {
+        Authorization: 'token ' + GITHUB_TOKEN
+      }
     }).then(response => {
-      dispatch(getGithubProfiles(response));
+      return response;
     }).catch(error => {
       console.log(error);
-      dispatch(getProfileError(error));
     });
+    return response;
+  } else {
+    return response;
   }
-}
+}, function (error) {
+  // Do something with response error
+  return Promise.reject(error);
+});
 
 export function getAllRepositories() {
   return function (dispatch) {
     return axios({
       method: 'GET',
-      // url: 'https://api.github.com/users/aarora11/repos',
       url: 'https://api.github.com/orgs/FiviumAustralia/repos',
       headers: {
         Authorization: 'token ' + GITHUB_TOKEN
@@ -42,8 +51,7 @@ export function getAllRepositories() {
 }
 
 export function getRepositoryDetails(value) {
-  let url = 'https://api.github.com/repos/FiviumAustralia/' + value + '/commits';
-  // console.log(value, url);
+  let url = 'https://api.github.com/repos/FiviumAustralia/' + value + '/stats/contributors';
   return function (dispatch) {
     return axios({
       method: 'GET',
@@ -53,7 +61,26 @@ export function getRepositoryDetails(value) {
       }
     }).then(response => {
       //TODO dispatch action to display the repostiory commit details
-      let payload = createPayload(response, value);
+      let payload = commitsPerUser(response.data);
+      dispatch(getUserCommitGraph(payload));
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+}
+
+export function getYearlyCommitActivity(value) {
+  let url = 'https://api.github.com/repos/FiviumAustralia/' + value + '/stats/commit_activity';
+  return function (dispatch) {
+    return axios({
+      method: 'GET',
+      url,
+      headers: {
+        Authorization: 'token ' + GITHUB_TOKEN
+      }
+    }).then(response => {
+      let payload = createCommitGraphPayload(response.data);
+      dispatch(setSelectedRepository(value));
       dispatch(getGithubRepositoryDetails(payload));
     }).catch(error => {
       console.log(error);
@@ -68,29 +95,27 @@ function getRepositories(response) {
   }
 }
 
-
-function getGithubProfiles(payload) {
-  return {
-    type: GITHUB_PROFILE,
-    payload: payload.data
-  }
-}
-
-function getGithubRepositoryDetails(payload){
+function getGithubRepositoryDetails(payload) {
   return {
     type: GITHUB_REPOSITORY_DETAILS,
     payload
   }
 }
 
-
-
-function getProfileError(error) {
+function getUserCommitGraph(payload) {
   return {
-    type: FETCH_ERROR,
-    payload: error
+    type: GITHUB_COMMIT_PER_USER,
+    payload
   }
 }
+
+function setSelectedRepository(payload) {
+  return {
+    type : SELECTED_REPOSITORY,
+    payload
+  }
+}
+
 
 function createUserMap(response) {
   let usersMap = {};
@@ -121,11 +146,11 @@ function createCommitDetails(response) {
   return commitDetails;
 }
 
-function getKeyByValue(usersMap, key){
+function getKeyByValue(usersMap, key) {
   let topCommitter;
   let keys = Object.keys(usersMap);
-  for(let i=0; i<Object.keys(usersMap).length;i++){
-    if(usersMap[keys[i]] === key){
+  for (let i = 0; i < Object.keys(usersMap).length; i++) {
+    if (usersMap[keys[i]] === key) {
       topCommitter = keys[i];
     }
   }
@@ -160,5 +185,36 @@ function createPayload(response, value) {
     topCommiter,
     selectedRepository: value
   };
+  return payload;
+}
+
+function commitsPerUser(data) {
+  let numberOfCommitsPerUser = {};
+  let maxCommits = 0;
+  let topCommiter = '';
+  for (let i = 0; i < data.length; i++) {
+
+    numberOfCommitsPerUser[data[i].author['login']] = data[i].total;
+    if (data[i].total > maxCommits) {
+      maxCommits = data[i].total;
+      topCommiter = data[i].author['login'];
+    }
+  }
+
+  let payload = {
+    numberOfCommitsPerUser,
+    maxCommits,
+    topCommiter
+  };
+  return payload;
+}
+
+function createCommitGraphPayload(data){
+  let payload = {};
+  data.map(obj => {
+    let todayTime = new Date(obj['week'] * 1000);
+    let key = todayTime.getDate()+'/'+todayTime.getMonth()+'/'+todayTime.getFullYear()
+    payload[key] = obj.total;
+  });
   return payload;
 }
